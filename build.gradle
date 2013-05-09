@@ -1,0 +1,17 @@
+apply plugin: 'java'
+dependencies {
+    compile 'javax.json:javax.json-api:1.0-b06'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.2.0'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.2.0'
+}
+
+group = "com.fasterxml.jackson"
+version = "0.1.0"
+
+jar {
+    baseName = "javax.json"
+}
+
+repositories { mavenCentral() }
+
+task wrapper(type: Wrapper) { gradleVersion = '1.6' }
