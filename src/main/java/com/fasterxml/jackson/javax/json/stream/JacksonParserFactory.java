@@ -57,7 +57,7 @@ public class JacksonParserFactory implements JsonParserFactory {
             JacksonValue<?> node = (JacksonValue<?>) obj;
             return new JacksonParser(node.delegate().traverse());
         }
-        throw new UnsupportedOperationException("Parser from object not implemented!");
+        throw new UnsupportedOperationException("No compatibility with other implementation yet.");
     }
 
     @Override
@@ -66,7 +66,7 @@ public class JacksonParserFactory implements JsonParserFactory {
             JacksonValue<?> node = (JacksonValue<?>) array;
             return new JacksonParser(node.delegate().traverse());
         }
-        throw new UnsupportedOperationException("Parser from array not implemented!");
+        throw new UnsupportedOperationException("No compatibility with other implementation yet.");
     }
 
     @Override
