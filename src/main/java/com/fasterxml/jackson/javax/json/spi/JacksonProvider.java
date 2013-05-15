@@ -94,14 +94,12 @@ public class JacksonProvider extends JsonProvider {
 
     @Override
     public JsonObjectBuilder createObjectBuilder() {
-        // TODO Auto-generated method stub
-        return null;
+        return new JacksonObjectBuilder(_mapper.getDeserializationConfig().getNodeFactory(), _nodeFactory);
     }
 
     @Override
     public JsonArrayBuilder createArrayBuilder() {
-        // TODO Auto-generated method stub
-        return null;
+        return new JacksonArrayBuilder(_mapper.getDeserializationConfig().getNodeFactory(), _nodeFactory);
     }
 
     @Override
