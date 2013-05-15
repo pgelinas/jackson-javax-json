@@ -9,6 +9,7 @@ import javax.json.stream.*;
 import javax.json.stream.JsonParser;
 
 import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.javax.json.*;
 
 public class JacksonParserFactory implements JsonParserFactory {
     private final JsonFactory _factory;
@@ -48,15 +49,23 @@ public class JacksonParserFactory implements JsonParserFactory {
         }
     }
 
-    // TODO: for these method, perhaps reuse the TreeTraversingParser? 
-    // This would imply having a proxy from JsonObject (javax.json) to JsonNode (Jackson)
+    // TODO: what to do in case we received something else then this implementation's node? 
+    // Probably re-use the JsonStructureParser from the RI?
     @Override
     public JsonParser createParser(JsonObject obj) {
+        if(obj instanceof JacksonValue) {
+            JacksonValue<?> node = (JacksonValue<?>) obj;
+            return new JacksonParser(node.delegate().traverse());
+        }
         throw new UnsupportedOperationException("Parser from object not implemented!");
     }
 
     @Override
     public JsonParser createParser(JsonArray array) {
+        if(array instanceof JacksonValue) {
+            JacksonValue<?> node = (JacksonValue<?>) array;
+            return new JacksonParser(node.delegate().traverse());
+        }
         throw new UnsupportedOperationException("Parser from array not implemented!");
     }
 

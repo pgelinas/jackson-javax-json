@@ -2,8 +2,8 @@ package com.fasterxml.jackson.javax.json;
 
 import javax.json.*;
 
-import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
 
-public interface JacksonValue<T extends TreeNode> extends JsonValue {
+public interface JacksonValue<T extends JsonNode> extends JsonValue {
     T delegate();
 }

@@ -64,14 +64,20 @@ public class JacksonProvider extends JsonProvider {
 
     @Override
     public JsonWriter createWriter(Writer writer) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return new JacksonWriter(_mapper, writer);
+        } catch (IOException exception) {
+            throw new JsonException("", exception);
+        }
     }
 
     @Override
     public JsonWriter createWriter(OutputStream out) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            return new JacksonWriter(_mapper, out);
+        } catch (IOException exception) {
+            throw new JsonException("", exception);
+        }
     }
 
     @Override
