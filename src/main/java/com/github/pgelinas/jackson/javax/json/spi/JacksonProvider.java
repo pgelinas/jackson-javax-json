@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.javax.json.spi;
+package com.github.pgelinas.jackson.javax.json.spi;
 
 import java.io.*;
 import java.util.*;
@@ -8,8 +8,8 @@ import javax.json.spi.*;
 import javax.json.stream.*;
 
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.javax.json.*;
-import com.fasterxml.jackson.javax.json.stream.*;
+import com.github.pgelinas.jackson.javax.json.*;
+import com.github.pgelinas.jackson.javax.json.stream.*;
 
 public class JacksonProvider extends JsonProvider {
     private final JacksonParserFactory _parserFactory;

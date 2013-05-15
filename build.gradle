@@ -5,11 +5,11 @@ dependencies {
     testCompile 'junit:junit:4.10'
 }
 
-group = "com.fasterxml.jackson"
+group = "com.github.pgelinas"
 version = "0.1.0"
 
 jar {
-    baseName = "javax.json"
+    baseName = "jackson.javax.json"
 }
 
 repositories { mavenCentral() }

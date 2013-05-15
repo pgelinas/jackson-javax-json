@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.javax.json.stream;
+package com.github.pgelinas.jackson.javax.json.stream;
 
 import java.io.*;
 import java.nio.charset.*;
@@ -9,7 +9,7 @@ import javax.json.stream.*;
 import javax.json.stream.JsonParser;
 
 import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.javax.json.*;
+import com.github.pgelinas.jackson.javax.json.*;
 
 public class JacksonParserFactory implements JsonParserFactory {
     private final JsonFactory _factory;

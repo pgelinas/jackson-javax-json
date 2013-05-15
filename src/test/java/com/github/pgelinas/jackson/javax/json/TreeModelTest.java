@@ -2,7 +2,7 @@
   * Copyright (c) 2002-2013 Nu Echo Inc.  All rights reserved. 
   */
 
-package com.fasterxml.jackson.javax.json;
+package com.github.pgelinas.jackson.javax.json;
 
 import static org.junit.Assert.*;
 
@@ -13,7 +13,7 @@ import javax.json.spi.*;
 
 import org.junit.*;
 
-import com.fasterxml.jackson.javax.json.spi.*;
+import com.github.pgelinas.jackson.javax.json.spi.*;
 
 /**
  * @author Nu Echo Inc.

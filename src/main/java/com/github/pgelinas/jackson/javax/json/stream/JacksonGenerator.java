@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.javax.json.stream;
+package com.github.pgelinas.jackson.javax.json.stream;
 
 import java.io.*;
 import java.math.*;

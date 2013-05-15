@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.javax.json;
+package com.github.pgelinas.jackson.javax.json;
 
 import java.util.*;
 

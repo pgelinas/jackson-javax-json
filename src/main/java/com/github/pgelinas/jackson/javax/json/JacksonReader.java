@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.javax.json;
+package com.github.pgelinas.jackson.javax.json;
 
 import java.io.*;
 
@@ -8,7 +8,7 @@ import javax.json.stream.*;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.*;
-import com.fasterxml.jackson.javax.json.stream.*;
+import com.github.pgelinas.jackson.javax.json.stream.*;
 
 public class JacksonReader implements JsonReader {
     private final ObjectMapper _mapper;
