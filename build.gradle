@@ -1,4 +1,6 @@
 apply plugin: 'java'
+apply plugin: 'eclipse'
+
 dependencies {
     compile 'javax.json:javax.json-api:1.0-b06'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.2.1'
