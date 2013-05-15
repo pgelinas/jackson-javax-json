@@ -9,6 +9,7 @@ import javax.json.stream.*;
 import javax.json.stream.JsonGenerator;
 
 import com.fasterxml.jackson.core.*;
+import com.github.pgelinas.jackson.javax.json.*;
 
 public class JacksonGeneratorFactory implements JsonGeneratorFactory {
     private final JsonFactory _factory;
@@ -19,6 +20,7 @@ public class JacksonGeneratorFactory implements JsonGeneratorFactory {
 
     public JacksonGeneratorFactory(Map<String, ?> config) {
         _factory = new JsonFactory();
+        ConfigurationUtils.configure(_factory, config);
     }
 
     @Override
@@ -50,6 +52,6 @@ public class JacksonGeneratorFactory implements JsonGeneratorFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return Collections.emptyMap();
+        return ConfigurationUtils.factoryConfiguration();
     }
 }

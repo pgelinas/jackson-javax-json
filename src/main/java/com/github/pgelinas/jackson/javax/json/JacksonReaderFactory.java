@@ -15,6 +15,7 @@ public class JacksonReaderFactory implements JsonReaderFactory {
     public JacksonReaderFactory(Map<String, ?> config) {
         _mapper = new ObjectMapper();
         _nodeFactory = new NodeFactory();
+        ConfigurationUtils.configure(_mapper, config);
     }
 
     public JacksonReaderFactory(ObjectMapper mapper, NodeFactory nodeFactory) {
@@ -39,6 +40,6 @@ public class JacksonReaderFactory implements JsonReaderFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return Collections.emptyMap();
+        return ConfigurationUtils.mapperConfiguration();
     }
 }

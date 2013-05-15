@@ -13,6 +13,7 @@ public class JacksonBuilderFactory implements JsonBuilderFactory {
     public JacksonBuilderFactory(Map<String, ?> config) {
         _mapper = new ObjectMapper();
         _nodeFactory = new NodeFactory();
+        ConfigurationUtils.configure(_mapper, config);
     }
 
     public JacksonBuilderFactory(ObjectMapper mapper, NodeFactory nodeFactory) {
@@ -22,16 +23,16 @@ public class JacksonBuilderFactory implements JsonBuilderFactory {
 
     @Override
     public JsonObjectBuilder createObjectBuilder() {
-        return new JacksonObjectBuilder(_mapper.getDeserializationConfig().getNodeFactory(), _nodeFactory);
+        return new JacksonObjectBuilder(_mapper.getNodeFactory(), _nodeFactory);
     }
 
     @Override
     public JsonArrayBuilder createArrayBuilder() {
-        return new JacksonArrayBuilder(_mapper.getDeserializationConfig().getNodeFactory(), _nodeFactory);
+        return new JacksonArrayBuilder(_mapper.getNodeFactory(), _nodeFactory);
     }
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return Collections.emptyMap();
+        return ConfigurationUtils.mapperConfiguration();
     }
 }

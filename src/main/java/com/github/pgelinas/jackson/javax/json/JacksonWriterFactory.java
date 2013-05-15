@@ -13,6 +13,7 @@ public class JacksonWriterFactory implements JsonWriterFactory {
 
     public JacksonWriterFactory(Map<String, ?> config) {
         _mapper = new ObjectMapper();
+        ConfigurationUtils.configure(_mapper, config);
     }
 
     public JacksonWriterFactory(ObjectMapper mapper) {
@@ -44,6 +45,6 @@ public class JacksonWriterFactory implements JsonWriterFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return Collections.emptyMap();
+        return ConfigurationUtils.mapperConfiguration();
     }
 }

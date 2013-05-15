@@ -6,7 +6,6 @@ import java.util.*;
 
 import javax.json.*;
 import javax.json.stream.*;
-import javax.json.stream.JsonParser;
 
 import com.fasterxml.jackson.core.*;
 import com.github.pgelinas.jackson.javax.json.*;
@@ -20,10 +19,11 @@ public class JacksonParserFactory implements JsonParserFactory {
 
     public JacksonParserFactory(Map<String, ?> config) {
         _factory = new JsonFactory();
+        ConfigurationUtils.configure(_factory, config);
     }
 
     @Override
-    public JsonParser createParser(Reader reader) {
+    public javax.json.stream.JsonParser createParser(Reader reader) {
         try {
             return new JacksonParser(_factory.createParser(reader));
         } catch (IOException e) {
@@ -32,7 +32,7 @@ public class JacksonParserFactory implements JsonParserFactory {
     }
 
     @Override
-    public JsonParser createParser(InputStream in) {
+    public javax.json.stream.JsonParser createParser(InputStream in) {
         try {
             return new JacksonParser(_factory.createParser(in));
         } catch (IOException e) {
@@ -41,7 +41,7 @@ public class JacksonParserFactory implements JsonParserFactory {
     }
 
     @Override
-    public JsonParser createParser(InputStream in, Charset charset) {
+    public javax.json.stream.JsonParser createParser(InputStream in, Charset charset) {
         try {
             return new JacksonParser(_factory.createParser(new InputStreamReader(in, charset)));
         } catch (IOException e) {
@@ -52,8 +52,8 @@ public class JacksonParserFactory implements JsonParserFactory {
     // TODO: what to do in case we received something else then this implementation's node? 
     // Probably re-use the JsonStructureParser from the RI?
     @Override
-    public JsonParser createParser(JsonObject obj) {
-        if(obj instanceof JacksonValue) {
+    public javax.json.stream.JsonParser createParser(JsonObject obj) {
+        if (obj instanceof JacksonValue) {
             JacksonValue<?> node = (JacksonValue<?>) obj;
             return new JacksonParser(node.delegate().traverse());
         }
@@ -61,8 +61,8 @@ public class JacksonParserFactory implements JsonParserFactory {
     }
 
     @Override
-    public JsonParser createParser(JsonArray array) {
-        if(array instanceof JacksonValue) {
+    public javax.json.stream.JsonParser createParser(JsonArray array) {
+        if (array instanceof JacksonValue) {
             JacksonValue<?> node = (JacksonValue<?>) array;
             return new JacksonParser(node.delegate().traverse());
         }
@@ -71,6 +71,6 @@ public class JacksonParserFactory implements JsonParserFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return Collections.emptyMap();
+        return ConfigurationUtils.factoryConfiguration();
     }
 }
