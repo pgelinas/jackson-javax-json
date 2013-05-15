@@ -6,20 +6,20 @@ import java.util.*;
 import javax.json.*;
 import javax.json.spi.*;
 import javax.json.stream.*;
-import javax.json.stream.JsonGenerator;
-import javax.json.stream.JsonParser;
 
-import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.javax.json.*;
 import com.fasterxml.jackson.javax.json.stream.*;
 
 public class JacksonProvider extends JsonProvider {
     private final JacksonParserFactory _parserFactory;
     private final JacksonGeneratorFactory _generatorFactory;
-
+    private final ObjectMapper _mapper = new ObjectMapper();
+    private final NodeFactory _nodeFactory = new NodeFactory();
+    
     public JacksonProvider() {
-        JsonFactory factory = new JsonFactory();
-        _parserFactory = new JacksonParserFactory(factory);
-        _generatorFactory = new JacksonGeneratorFactory(factory);
+        _parserFactory = new JacksonParserFactory(_mapper.getFactory());
+        _generatorFactory = new JacksonGeneratorFactory(_mapper.getFactory());
     }
 
     @Override
@@ -54,14 +54,12 @@ public class JacksonProvider extends JsonProvider {
 
     @Override
     public JsonReader createReader(Reader reader) {
-        // TODO Auto-generated method stub
-        return null;
+        return new JacksonReader(_mapper, _nodeFactory, reader);
     }
 
     @Override
     public JsonReader createReader(InputStream in) {
-        // TODO Auto-generated method stub
-        return null;
+        return new JacksonReader(_mapper, _nodeFactory, in);
     }
 
     @Override
