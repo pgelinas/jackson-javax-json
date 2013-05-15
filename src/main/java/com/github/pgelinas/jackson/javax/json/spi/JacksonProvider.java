@@ -12,14 +12,22 @@ import com.github.pgelinas.jackson.javax.json.*;
 import com.github.pgelinas.jackson.javax.json.stream.*;
 
 public class JacksonProvider extends JsonProvider {
-    private final JacksonParserFactory _parserFactory;
-    private final JacksonGeneratorFactory _generatorFactory;
     private final ObjectMapper _mapper = new ObjectMapper();
     private final NodeFactory _nodeFactory = new NodeFactory();
+    // Factories
+    private final JacksonParserFactory _parserFactory;
+    private final JacksonGeneratorFactory _generatorFactory;
+    private final JacksonWriterFactory _writerFactory;
+    private final JacksonReaderFactory _readerFactory;
+    private final JacksonBuilderFactory _builderFactory;
+    
     
     public JacksonProvider() {
         _parserFactory = new JacksonParserFactory(_mapper.getFactory());
         _generatorFactory = new JacksonGeneratorFactory(_mapper.getFactory());
+        _writerFactory = new JacksonWriterFactory(_mapper);
+        _readerFactory = new JacksonReaderFactory(_mapper, _nodeFactory);
+        _builderFactory = new JacksonBuilderFactory(_mapper, _nodeFactory);
     }
 
     @Override
@@ -54,58 +62,47 @@ public class JacksonProvider extends JsonProvider {
 
     @Override
     public JsonReader createReader(Reader reader) {
-        return new JacksonReader(_mapper, _nodeFactory, reader);
+        return _readerFactory.createReader(reader);
     }
 
     @Override
     public JsonReader createReader(InputStream in) {
-        return new JacksonReader(_mapper, _nodeFactory, in);
+        return _readerFactory.createReader(in);
     }
 
     @Override
     public JsonWriter createWriter(Writer writer) {
-        try {
-            return new JacksonWriter(_mapper, writer);
-        } catch (IOException exception) {
-            throw new JsonException("", exception);
-        }
+        return _writerFactory.createWriter(writer);
     }
 
     @Override
     public JsonWriter createWriter(OutputStream out) {
-        try {
-            return new JacksonWriter(_mapper, out);
-        } catch (IOException exception) {
-            throw new JsonException("", exception);
-        }
+        return _writerFactory.createWriter(out);
     }
 
     @Override
     public JsonWriterFactory createWriterFactory(Map<String, ?> config) {
-        // TODO Auto-generated method stub
-        return null;
+        return new JacksonWriterFactory(config);
     }
 
     @Override
     public JsonReaderFactory createReaderFactory(Map<String, ?> config) {
-        // TODO Auto-generated method stub
-        return null;
+        return new JacksonReaderFactory(config);
     }
 
     @Override
     public JsonObjectBuilder createObjectBuilder() {
-        return new JacksonObjectBuilder(_mapper.getDeserializationConfig().getNodeFactory(), _nodeFactory);
+        return _builderFactory.createObjectBuilder();
     }
 
     @Override
     public JsonArrayBuilder createArrayBuilder() {
-        return new JacksonArrayBuilder(_mapper.getDeserializationConfig().getNodeFactory(), _nodeFactory);
+        return _builderFactory.createArrayBuilder();
     }
 
     @Override
     public JsonBuilderFactory createBuilderFactory(Map<String, ?> config) {
-        // TODO Auto-generated method stub
-        return null;
+        return new JacksonBuilderFactory(config);
     }
 
 }
