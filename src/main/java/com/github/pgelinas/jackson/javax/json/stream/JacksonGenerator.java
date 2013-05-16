@@ -10,6 +10,7 @@ import javax.json.stream.JsonGenerationException;
 import javax.json.stream.JsonGenerator;
 
 import com.fasterxml.jackson.core.*;
+import com.github.pgelinas.jackson.javax.json.*;
 
 public class JacksonGenerator implements JsonGenerator {
     private final com.fasterxml.jackson.core.JsonGenerator _generator;
@@ -70,22 +71,23 @@ public class JacksonGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator write(String name, JsonValue value) {
-        ValueType type = value.getValueType();
-        switch (type) {
-            case ARRAY:
-                try {
-                    _generator.writeFieldName(name);
-                } catch (com.fasterxml.jackson.core.JsonGenerationException e) {
-                    throw new JsonGenerationException("", e);
-                } catch (IOException e) {
-                    throw new JsonException("", e);
-                }
-                writeArray((JsonArray) value);
-                break;
-
-            default:
-                break;
+        if (value == null) throw new NullPointerException();
+        try {
+            if (value == JsonValue.NULL) {
+                _generator.writeNullField(name);
+            } else if (value == JsonValue.FALSE) {
+                _generator.writeBooleanField(name, false);
+            } else if (value == JsonValue.TRUE) {
+                _generator.writeBooleanField(name, true);
+            } else if (value instanceof JacksonValue) {
+                _generator.writeObjectField(name, ((JacksonValue<?>) value).delegate());
+            } else throw new UnsupportedOperationException("No compatibility with other implementation yet.");
+        } catch (com.fasterxml.jackson.core.JsonGenerationException e) {
+            throw new JsonGenerationException("", e);
+        } catch (IOException e) {
+            throw new JsonException("", e);
         }
+
         return this;
     }
 
@@ -202,7 +204,7 @@ public class JacksonGenerator implements JsonGenerator {
         } catch (IOException e) {
             throw new JsonException("", e);
         }
-        return null;
+        return this;
     }
 
     @Override

@@ -7,6 +7,7 @@ import java.math.*;
 import java.util.*;
 
 import javax.json.*;
+import javax.json.stream.*;
 import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser;
 
@@ -51,7 +52,10 @@ public class JacksonParser implements JsonParser {
 
     @Override
     public Event next() {
-        advanceParser();
+        if (!_hasNextCalled) {
+            advanceParser();
+        }
+        _hasNextCalled = false;
         Event event = _tokenToEvent.get(_nextToken);
         if (event == null) throw new NoSuchElementException();
         return event;
@@ -60,6 +64,8 @@ public class JacksonParser implements JsonParser {
     private void advanceParser() {
         try {
             _nextToken = _parser.nextToken();
+        } catch (JsonParseException e){
+            throw new JsonParsingException("", e, getLocation());
         } catch (IOException e) {
             throw new JsonException("", e);
         }
@@ -67,7 +73,6 @@ public class JacksonParser implements JsonParser {
 
     @Override
     public String getString() {
-        _hasNextCalled = false;
         JsonToken currentToken = _parser.getCurrentToken();
         try {
             if (currentToken == FIELD_NAME) {
@@ -75,6 +80,8 @@ public class JacksonParser implements JsonParser {
             } else if (currentToken == VALUE_STRING
                        || currentToken == VALUE_NUMBER_FLOAT
                        || currentToken == VALUE_NUMBER_INT) { return _parser.getValueAsString(); }
+        } catch (JsonParseException e){
+            throw new JsonParsingException("", e, getLocation());
         } catch (IOException e) {
             throw new JsonException("", e);
         }
@@ -83,9 +90,13 @@ public class JacksonParser implements JsonParser {
 
     @Override
     public boolean isIntegralNumber() {
-        _hasNextCalled = false;
+        JsonToken currentToken = _parser.getCurrentToken();
+        if(currentToken != JsonToken.VALUE_NUMBER_FLOAT && currentToken != JsonToken.VALUE_NUMBER_INT)
+            throw new IllegalStateException("Illegal parser state for isIntegralNumber()");
         try {
             return _parser.getNumberType() == NumberType.INT;
+        } catch (JsonParseException e){
+            throw new JsonParsingException("", e, getLocation());
         } catch (IOException e) {
             throw new JsonException("", e);
         }
@@ -93,9 +104,13 @@ public class JacksonParser implements JsonParser {
 
     @Override
     public int getInt() {
-        _hasNextCalled = false;
+        JsonToken currentToken = _parser.getCurrentToken();
+        if(currentToken != JsonToken.VALUE_NUMBER_FLOAT && currentToken != JsonToken.VALUE_NUMBER_INT)
+            throw new IllegalStateException("Illegal parser state for isIntegralNumber()");
         try {
             return _parser.getIntValue();
+        } catch (JsonParseException e){
+            throw new JsonParsingException("", e, getLocation());
         } catch (IOException e) {
             throw new JsonException("", e);
         }
@@ -103,9 +118,13 @@ public class JacksonParser implements JsonParser {
 
     @Override
     public long getLong() {
-        _hasNextCalled = false;
+        JsonToken currentToken = _parser.getCurrentToken();
+        if(currentToken != JsonToken.VALUE_NUMBER_FLOAT && currentToken != JsonToken.VALUE_NUMBER_INT)
+            throw new IllegalStateException("Illegal parser state for isIntegralNumber()");
         try {
             return _parser.getLongValue();
+        } catch (JsonParseException e){
+            throw new JsonParsingException("", e, getLocation());
         } catch (IOException e) {
             throw new JsonException("", e);
         }
@@ -113,9 +132,13 @@ public class JacksonParser implements JsonParser {
 
     @Override
     public BigDecimal getBigDecimal() {
-        _hasNextCalled = false;
+        JsonToken currentToken = _parser.getCurrentToken();
+        if(currentToken != JsonToken.VALUE_NUMBER_FLOAT && currentToken != JsonToken.VALUE_NUMBER_INT)
+            throw new IllegalStateException("Illegal parser state for isIntegralNumber()");
         try {
             return _parser.getDecimalValue();
+        } catch (JsonParseException e){
+            throw new JsonParsingException("", e, getLocation());
         } catch (IOException e) {
             throw new JsonException("", e);
         }

@@ -12,6 +12,7 @@ import com.github.pgelinas.jackson.javax.json.*;
 
 public class JacksonParserFactory implements JsonParserFactory {
     private final JsonFactory _factory;
+    private Map<String, Object> _configInUse;
 
     public JacksonParserFactory(JsonFactory factory) {
         _factory = factory;
@@ -19,7 +20,7 @@ public class JacksonParserFactory implements JsonParserFactory {
 
     public JacksonParserFactory(Map<String, ?> config) {
         _factory = new JsonFactory();
-        ConfigurationUtils.configure(_factory, config);
+        _configInUse = ConfigurationUtils.configure(_factory, config);
     }
 
     @Override
@@ -71,6 +72,6 @@ public class JacksonParserFactory implements JsonParserFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return ConfigurationUtils.factoryConfiguration();
+        return _configInUse;
     }
 }

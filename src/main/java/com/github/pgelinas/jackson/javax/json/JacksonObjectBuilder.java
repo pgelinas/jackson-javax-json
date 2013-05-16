@@ -25,6 +25,7 @@ public class JacksonObjectBuilder implements JsonObjectBuilder {
 
     @Override
     public JsonObjectBuilder add(String name, JsonValue value) {
+        if (value == null || name == null) throw new NullPointerException();
         if (value == JsonValue.NULL) {
             _delegate.putNull(name);
         } else if (value == JsonValue.FALSE) {
@@ -39,54 +40,63 @@ public class JacksonObjectBuilder implements JsonObjectBuilder {
 
     @Override
     public JsonObjectBuilder add(String name, String value) {
+        if (value == null || name == null) throw new NullPointerException();
         _delegate.put(name, value);
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, BigInteger value) {
+        if (value == null || name == null) throw new NullPointerException();
         _delegate.put(name, _jsonNodeFactory.numberNode(value));
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, BigDecimal value) {
+        if (value == null || name == null) throw new NullPointerException();
         _delegate.put(name, value);
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, int value) {
+        if (name == null) throw new NullPointerException();
         _delegate.put(name, value);
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, long value) {
+        if (name == null) throw new NullPointerException();
         _delegate.put(name, value);
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, double value) {
+        if (name == null) throw new NullPointerException();
         _delegate.put(name, value);
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, boolean value) {
+        if (name == null) throw new NullPointerException();
         _delegate.put(name, value);
         return this;
     }
 
     @Override
     public JsonObjectBuilder addNull(String name) {
+        if (name == null) throw new NullPointerException();
         _delegate.putNull(name);
         return this;
     }
 
     @Override
     public JsonObjectBuilder add(String name, JsonObjectBuilder builder) {
+        if (builder == null || name == null) throw new NullPointerException();
         if (!(builder instanceof JacksonObjectBuilder))
             throw new UnsupportedOperationException("No compatibility with other implementation yet.");
         _delegate.put(name, ((JacksonObjectBuilder) builder).delegate());
@@ -95,6 +105,7 @@ public class JacksonObjectBuilder implements JsonObjectBuilder {
 
     @Override
     public JsonObjectBuilder add(String name, JsonArrayBuilder builder) {
+        if (builder == null || name == null) throw new NullPointerException();
         if (!(builder instanceof JacksonArrayBuilder))
             throw new UnsupportedOperationException("No compatibility with other implementation yet.");
         _delegate.put(name, ((JacksonArrayBuilder) builder).delegate());

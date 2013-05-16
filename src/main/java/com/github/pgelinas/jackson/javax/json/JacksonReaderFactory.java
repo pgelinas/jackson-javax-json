@@ -11,11 +11,12 @@ import com.fasterxml.jackson.databind.*;
 public class JacksonReaderFactory implements JsonReaderFactory {
     private final ObjectMapper _mapper;
     private final NodeFactory _nodeFactory;
+    private Map<String, Object> _configInUse;
 
     public JacksonReaderFactory(Map<String, ?> config) {
         _mapper = new ObjectMapper();
         _nodeFactory = new NodeFactory();
-        ConfigurationUtils.configure(_mapper, config);
+        _configInUse = ConfigurationUtils.configure(_mapper, config);
     }
 
     public JacksonReaderFactory(ObjectMapper mapper, NodeFactory nodeFactory) {
@@ -40,6 +41,6 @@ public class JacksonReaderFactory implements JsonReaderFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return ConfigurationUtils.mapperConfiguration();
+        return _configInUse;
     }
 }

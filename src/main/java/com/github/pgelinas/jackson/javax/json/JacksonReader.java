@@ -15,6 +15,7 @@ public class JacksonReader implements JsonReader {
     private final NodeFactory _nodeFactory;
     private Reader _reader;
     private InputStream _in;
+    private boolean _closed;
 
     public JacksonReader(ObjectMapper mapper, NodeFactory nodeFactory, Reader reader) {
         _mapper = mapper;
@@ -44,6 +45,7 @@ public class JacksonReader implements JsonReader {
     }
 
     private <T extends JsonNode> JsonValue read(Class<T> type) {
+        if(_closed) throw new IllegalStateException();
         T node;
         try {
             if (_reader != null) {
@@ -51,6 +53,7 @@ public class JacksonReader implements JsonReader {
             } else {
                 node = _mapper.readValue(_in, type);
             }
+            _closed = true;
         } catch (JsonProcessingException exception) {
             throw new JsonParsingException("", new JacksonLocation(exception.getLocation()));
         } catch (IOException exception) {

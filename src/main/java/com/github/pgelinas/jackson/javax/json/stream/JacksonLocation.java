@@ -17,7 +17,7 @@ public class JacksonLocation implements JsonLocation {
 
     @Override
     public long getColumnNumber() {
-        return _location.getColumnNr();
+        return _location.getColumnNr() -1;
     }
 
     @Override

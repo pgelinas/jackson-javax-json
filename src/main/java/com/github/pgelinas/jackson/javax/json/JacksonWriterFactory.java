@@ -10,10 +10,11 @@ import com.fasterxml.jackson.databind.*;
 
 public class JacksonWriterFactory implements JsonWriterFactory {
     private final ObjectMapper _mapper;
+    private Map<String, Object> _configInUse;
 
     public JacksonWriterFactory(Map<String, ?> config) {
         _mapper = new ObjectMapper();
-        ConfigurationUtils.configure(_mapper, config);
+        _configInUse = ConfigurationUtils.configure(_mapper, config);
     }
 
     public JacksonWriterFactory(ObjectMapper mapper) {
@@ -45,6 +46,6 @@ public class JacksonWriterFactory implements JsonWriterFactory {
 
     @Override
     public Map<String, ?> getConfigInUse() {
-        return ConfigurationUtils.mapperConfiguration();
+        return _configInUse;
     }
 }

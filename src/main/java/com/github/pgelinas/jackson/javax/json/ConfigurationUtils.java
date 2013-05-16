@@ -39,8 +39,8 @@ public final class ConfigurationUtils {
         }
         return null;
     }
-    
-    public static Map<String, Boolean> mapperConfiguration(){
+
+    public static Map<String, Boolean> mapperConfiguration() {
         Map<String, Boolean> config = new HashMap<String, Boolean>();
         MapperFeature[] mapperFeatures = MapperFeature.values();
         DeserializationFeature[] deserializationFeatures = DeserializationFeature.values();
@@ -75,26 +75,34 @@ public final class ConfigurationUtils {
         return config;
     }
 
-    public static void configure(JsonFactory factory, Map<String, ?> config) {
+    public static Map<String, Object> configure(JsonFactory factory, Map<String, ?> config) {
+        if (config == null) return Collections.emptyMap();
+        Map<String, Object> inUse = new HashMap<String, Object>();
         for (Entry<String, ?> entry : config.entrySet()) {
             String featureName = entry.getKey();
             Object value = entry.getValue();
             if (!(value instanceof Boolean)) continue;
             Boolean state = (Boolean) value;
-            configure(factory, featureName, state);
-        }
-    }
-
-    public static void configure(ObjectMapper mapper, Map<String, ?> config) {
-        for (Entry<String, ?> entry : config.entrySet()) {
-            String featureName = entry.getKey();
-            Object value = entry.getValue();
-            if (!(value instanceof Boolean)) continue;
-            Boolean state = (Boolean) value;
-            if (!configure(mapper, featureName, state)) {
-                configure(mapper.getFactory(), featureName, state);
+            if (configure(factory, featureName, state)) {
+                inUse.put(featureName, state);
             }
         }
+        return inUse;
+    }
+
+    public static Map<String, Object> configure(ObjectMapper mapper, Map<String, ?> config) {
+        if (config == null) return Collections.emptyMap();
+        Map<String, Object> inUse = new HashMap<String, Object>();
+        for (Entry<String, ?> entry : config.entrySet()) {
+            String featureName = entry.getKey();
+            Object value = entry.getValue();
+            if (!(value instanceof Boolean)) continue;
+            Boolean state = (Boolean) value;
+            if (configure(mapper, featureName, state) || configure(mapper.getFactory(), featureName, state)) {
+                inUse.put(featureName, state);
+            }
+        }
+        return inUse;
     }
 
     private static boolean configure(ObjectMapper mapper, String featureName, Boolean state) {
@@ -104,32 +112,34 @@ public final class ConfigurationUtils {
             return true;
         }
         DeserializationFeature deserializationFeature = findDeserializationFeature(featureName);
-        if(deserializationFeature != null){
+        if (deserializationFeature != null) {
             mapper.configure(deserializationFeature, state);
             return true;
         }
         SerializationFeature serializationFeature = findSerializationFeature(featureName);
-        if(serializationFeature != null){
+        if (serializationFeature != null) {
             mapper.configure(serializationFeature, state);
             return true;
         }
         return false;
     }
 
-    private static void configure(JsonFactory factory, String featureName, boolean state) {
+    private static boolean configure(JsonFactory factory, String featureName, boolean state) {
         JsonFactory.Feature factoryFeature = findFactoryFeature(featureName);
         if (factoryFeature != null) {
             factory.configure(factoryFeature, state);
-            return;
+            return true;
         }
         JsonParser.Feature parserFeature = findParserFeature(featureName);
         if (parserFeature != null) {
             factory.configure(parserFeature, state);
-            return;
+            return true;
         }
         JsonGenerator.Feature generatorFeature = findGeneratorFeature(featureName);
         if (generatorFeature != null) {
             factory.configure(generatorFeature, state);
+            return true;
         }
+        return false;
     }
 }

@@ -23,6 +23,7 @@ public class JacksonArrayBuilder implements JsonArrayBuilder {
 
     @Override
     public JsonArrayBuilder add(JsonValue value) {
+        if (value == null) throw new NullPointerException();
         if (value == JsonValue.NULL) {
             _delegate.addNull();
         } else if (value == JsonValue.FALSE) {
@@ -38,18 +39,21 @@ public class JacksonArrayBuilder implements JsonArrayBuilder {
 
     @Override
     public JsonArrayBuilder add(String value) {
+        if (value == null) throw new NullPointerException();
         _delegate.add(value);
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(BigDecimal value) {
+        if (value == null) throw new NullPointerException();
         _delegate.add(value);
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(BigInteger value) {
+        if (value == null) throw new NullPointerException();
         _delegate.add(_jsonNodeFactory.numberNode(value));
         return this;
     }
@@ -86,6 +90,7 @@ public class JacksonArrayBuilder implements JsonArrayBuilder {
 
     @Override
     public JsonArrayBuilder add(JsonObjectBuilder builder) {
+        if (builder == null) throw new NullPointerException();
         if (!(builder instanceof JacksonObjectBuilder))
             throw new UnsupportedOperationException("No compatibility with other implementation yet.");
         _delegate.add(((JacksonObjectBuilder) builder).delegate());
@@ -94,6 +99,7 @@ public class JacksonArrayBuilder implements JsonArrayBuilder {
 
     @Override
     public JsonArrayBuilder add(JsonArrayBuilder builder) {
+        if (builder == null) throw new NullPointerException();
         if (!(builder instanceof JacksonArrayBuilder))
             throw new UnsupportedOperationException("No compatibility with other implementation yet.");
         _delegate.add(((JacksonArrayBuilder) builder).delegate());

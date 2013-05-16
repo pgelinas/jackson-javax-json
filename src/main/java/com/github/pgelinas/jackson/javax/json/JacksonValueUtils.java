@@ -20,6 +20,7 @@ public final class JacksonValueUtils {
         _tokenToValueType.put(JsonToken.VALUE_NULL, ValueType.NULL);
         _tokenToValueType.put(JsonToken.VALUE_NUMBER_FLOAT, ValueType.NUMBER);
         _tokenToValueType.put(JsonToken.VALUE_NUMBER_INT, ValueType.NUMBER);
+        _tokenToValueType.put(JsonToken.VALUE_STRING, ValueType.STRING);
     }
     
     public static ValueType getValueType(JacksonValue<?> value) {
