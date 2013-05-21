@@ -23,11 +23,35 @@ provider.createWriterFactory(config); // Understands JsonFactory, JsonGenerator,
 provider.createBuilderFactory(Collections.emptyMap()); // No configuration needed
 ``` 
 
-Of course, you don't have to the directly reference the Jackson enum class, you can put directly the enum name in the map and not depend on Jackson in your project.
+Of course, you don't have to directly reference the Jackson enum class, you can put directly the enum name in the map and not depend on Jackson in your project.
+
+## Tests
+
+As you can see, there's no unit tests that come bundled with the project. The unit tests used are the ones from the RI project to ensure that this project respects the API. Some of the tests are failing and probably won't be fixed; see the [differences section](#differences-from-the-api) for an explanation.  
+
+## Differences from the API
+
+Some of the API isn't respected by this library for various reason. Some of this is highlighted by failing unit tests, some are deliberate omission. Here's the rundown:
+
+* `JsonValue` class tree implementation are NOT immutable, you simply don't have access to mutator methods. This mirror the fact that Jackson's `TreeNode` implementation isn't immutable and you only have access to accessor method on the interface.
+* `JsonValue`s built from JsonObject/ArrayBuilder share the same `TreeNode` instances; this can have side-effects if you modify a builder after calling its `build` method and expected the `JsonValue` returned to not be modified. This was done for performance reason since it would have required a deep copy to occur. 
+    * This might be changed in a future version if this causes too much confusion or the performance hit is considered to not be so bad.
+* Failing tests
+    * `JsonParsingExceptionTest#testWrongJson` (and `testWrongJson1`): the API is too restrictive about JSON correctness. These cases are useful when receiving a continuous stream of data from a server, which can sends information object by object.
+    * `JssonParsingExceptionTest#testLocation1`: when Jackson throws an exception about an unrecognized token it does so with a location that points at the END of the token; the RI does it with a location that points at an offending character.
+    * `JsonNumberTest#testBigDecimal` (and `testIntNumberType`): the API specifies number operation as counterparts of `BigDecimal` and the RI always uses BigDecimal to store its data, even if it would fit in a `short`. This has performance implication and equality implication too; the failures are explained because some nodes are numerically equals but have a different class.
+    * `JsonGeneratorTest`
+        * `testGenerationException3`: closing a writer which as written nothing isn't a problem usually, but this API says otherwise. Simply ignore this test.
+        * `testGenerationException4` and `testGenerationException5`: when closing its generator, Jackson automatically closes any open object/array, if it will generate correct JSON. 
+        * `testGenerationArrayDouble` and `testGenerationObjectDouble`: Jackson is able to handle `NaN` and inifity by writing the value as a String instead and reads it in the same way.
 
 ## Building
 
 This project uses [Gradle](http://www.gradle.org/) for its build system and has an helpful wrapper to bootstrap. At the root of the project, run `gradlew build` to build the project.
+
+## Usage
+
+Add a dependency on this project with your favorite dependency management tool (at optional/provided/runtime, whatever suits you) and add a file named `javax.json.spi.JsonProvider` with the line `com.github.pgelinas.jackson.javax.json.spi.JacksonProvider` in `META-INF/services/. This is the usual mechanism for Java's SPI.
 
 ## Developing
 
