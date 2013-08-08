@@ -34,8 +34,6 @@ As you can see, there's no unit tests that come bundled with the project. The un
 Some of the API isn't respected by this library for various reason. Some of this is highlighted by failing unit tests, some are deliberate omission. Here's the rundown:
 
 * `JsonValue` class tree implementation are NOT immutable, you simply don't have access to mutator methods. This mirror the fact that Jackson's `TreeNode` implementation isn't immutable and you only have access to accessor method on the interface.
-* `JsonValue`s built from JsonObject/ArrayBuilder share the same `TreeNode` instances; this can have side-effects if you modify a builder after calling its `build` method and expected the `JsonValue` returned to not be modified. This was done for performance reason since it would have required a deep copy to occur. 
-    * This might be changed in a future version if this causes too much confusion or the performance hit is considered to not be so bad.
 * Failing tests
     * `JsonParsingExceptionTest#testWrongJson` (and `testWrongJson1`): the API is too restrictive about JSON correctness. These cases are useful when receiving a continuous stream of data from a server, which can sends information object by object.
     * `JssonParsingExceptionTest#testLocation1`: when Jackson throws an exception about an unrecognized token it does so with a location that points at the END of the token; the RI does it with a location that points at an offending character.

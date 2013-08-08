@@ -114,6 +114,6 @@ public class JacksonObjectBuilder implements JsonObjectBuilder {
 
     @Override
     public JsonObject build() {
-        return new JacksonObject(_delegate, _nodeFactory);
+        return new JacksonObject(_delegate.deepCopy(), _nodeFactory);
     }
 }

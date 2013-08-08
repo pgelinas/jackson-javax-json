@@ -108,6 +108,6 @@ public class JacksonArrayBuilder implements JsonArrayBuilder {
 
     @Override
     public JsonArray build() {
-        return new JacksonArray(_delegate, _nodeFactory);
+        return new JacksonArray(_delegate.deepCopy(), _nodeFactory);
     }
 }
