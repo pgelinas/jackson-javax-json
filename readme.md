@@ -27,7 +27,7 @@ Of course, you don't have to directly reference the Jackson enum class, you can 
 
 ## Tests
 
-As you can see, there's no unit tests that come bundled with the project. The unit tests used are the ones from the RI project to ensure that this project respects the API. Some of the tests are failing and probably won't be fixed; see the [differences section](#differences-from-the-api) for an explanation.  
+As you can see, there's not much unit tests that come bundled with the project. The unit tests used are the ones from the RI project to ensure that this project respects the API. Some of the tests are failing and probably won't be fixed; see the [differences section](#differences-from-the-api) for an explanation.  
 
 ## Differences from the API
 
