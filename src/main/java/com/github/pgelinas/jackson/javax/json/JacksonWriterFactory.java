@@ -13,7 +13,7 @@ public class JacksonWriterFactory implements JsonWriterFactory {
     private Map<String, Object> _configInUse;
 
     public JacksonWriterFactory(Map<String, ?> config) {
-        _mapper = new ObjectMapper();
+        this(new ObjectMapper());
         _configInUse = ConfigurationUtils.configure(_mapper, config);
     }
 

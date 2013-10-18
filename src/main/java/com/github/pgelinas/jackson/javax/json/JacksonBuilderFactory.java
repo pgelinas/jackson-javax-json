@@ -12,7 +12,7 @@ public class JacksonBuilderFactory implements JsonBuilderFactory {
 
     public JacksonBuilderFactory(Map<String, ?> config) {
         _mapper = new ObjectMapper();
-        _nodeFactory = new NodeFactory();
+        _nodeFactory = new NodeFactory(_mapper.getNodeFactory());
         ConfigurationUtils.configure(_mapper, config);
     }
 

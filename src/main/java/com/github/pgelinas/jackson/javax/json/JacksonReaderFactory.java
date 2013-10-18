@@ -15,7 +15,7 @@ public class JacksonReaderFactory implements JsonReaderFactory {
 
     public JacksonReaderFactory(Map<String, ?> config) {
         _mapper = new ObjectMapper();
-        _nodeFactory = new NodeFactory();
+        _nodeFactory = new NodeFactory(_mapper.getNodeFactory());
         _configInUse = ConfigurationUtils.configure(_mapper, config);
     }
 

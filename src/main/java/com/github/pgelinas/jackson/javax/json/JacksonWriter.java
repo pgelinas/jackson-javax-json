@@ -1,24 +1,30 @@
 package com.github.pgelinas.jackson.javax.json;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 
-import javax.json.*;
+import javax.json.JsonArray;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonStructure;
+import javax.json.JsonWriter;
 
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pgelinas.jackson.javax.json.stream.JacksonGenerator;
 
 public class JacksonWriter implements JsonWriter {
     private final ObjectMapper _mapper;
-    private final JsonGenerator _generator;
+    private final JacksonGenerator _generator;
 
     public JacksonWriter(ObjectMapper mapper, Writer writer) throws IOException {
         _mapper = mapper;
-        _generator = mapper.getFactory().createGenerator(writer);
+        _generator = new JacksonGenerator(mapper.getFactory().createGenerator(writer));
     }
 
     public JacksonWriter(ObjectMapper mapper, OutputStream out) throws IOException {
         _mapper = mapper;
-        _generator = mapper.getFactory().createGenerator(out);
+        _generator = new JacksonGenerator(mapper.getFactory().createGenerator(out));
     }
 
     @Override
@@ -36,22 +42,20 @@ public class JacksonWriter implements JsonWriter {
         writeValue(value);
     }
 
-    private void writeValue(JsonStructure array) {
-        if (!(array instanceof JacksonValue))
-            throw new UnsupportedOperationException("No compatibility with other implementation yet.");
-        try {
-            _mapper.writeTree(_generator, ((JacksonValue<?>) array).delegate());
-        } catch (IOException exception) {
-            throw new JsonException("", exception);
+    private void writeValue(JsonStructure structure) {
+        if (structure instanceof JacksonValue) {
+            try {
+                _mapper.writeTree(_generator.delegate(), ((JacksonValue<?>) structure).delegate());
+            } catch (IOException exception) {
+                throw new JsonException("", exception);
+            }
+        } else {
+            _generator.write(structure);
         }
     }
 
     @Override
     public void close() {
-        try {
-            _generator.close();
-        } catch (IOException exception) {
-            throw new JsonException("", exception);
-        }
+        _generator.close();
     }
 }

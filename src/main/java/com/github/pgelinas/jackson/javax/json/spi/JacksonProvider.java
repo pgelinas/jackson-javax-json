@@ -13,7 +13,7 @@ import com.github.pgelinas.jackson.javax.json.stream.*;
 
 public class JacksonProvider extends JsonProvider {
     private final ObjectMapper _mapper = new ObjectMapper();
-    private final NodeFactory _nodeFactory = new NodeFactory();
+    private final NodeFactory _nodeFactory = new NodeFactory(_mapper.getNodeFactory());
     // Factories
     private final JacksonParserFactory _parserFactory;
     private final JacksonGeneratorFactory _generatorFactory;
@@ -23,7 +23,7 @@ public class JacksonProvider extends JsonProvider {
     
     
     public JacksonProvider() {
-        _parserFactory = new JacksonParserFactory(_mapper.getFactory());
+        _parserFactory = new JacksonParserFactory(_mapper.getFactory(), _nodeFactory);
         _generatorFactory = new JacksonGeneratorFactory(_mapper.getFactory());
         _writerFactory = new JacksonWriterFactory(_mapper);
         _readerFactory = new JacksonReaderFactory(_mapper, _nodeFactory);
@@ -42,7 +42,7 @@ public class JacksonProvider extends JsonProvider {
 
     @Override
     public JsonParserFactory createParserFactory(Map<String, ?> config) {
-        return new JacksonParserFactory(config);
+        return new JacksonParserFactory(config, _nodeFactory);
     }
 
     @Override

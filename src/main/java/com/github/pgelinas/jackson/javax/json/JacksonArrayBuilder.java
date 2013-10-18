@@ -32,7 +32,9 @@ public class JacksonArrayBuilder implements JsonArrayBuilder {
             _delegate.add(true);
         } else if (value instanceof JacksonValue) {
             _delegate.add(((JacksonValue<?>) value).delegate());
-        } else throw new UnsupportedOperationException("No compatibility with other implementation yet.");
+        } else {
+            _delegate.add(_nodeFactory.from(value));
+        }
 
         return this;
     }
@@ -91,18 +93,22 @@ public class JacksonArrayBuilder implements JsonArrayBuilder {
     @Override
     public JsonArrayBuilder add(JsonObjectBuilder builder) {
         if (builder == null) throw new NullPointerException();
-        if (!(builder instanceof JacksonObjectBuilder))
-            throw new UnsupportedOperationException("No compatibility with other implementation yet.");
-        _delegate.add(((JacksonObjectBuilder) builder).delegate());
+        if (!(builder instanceof JacksonObjectBuilder)) {
+            _delegate.add(_nodeFactory.from(builder.build()));
+        } else {
+            _delegate.add(((JacksonObjectBuilder) builder).delegate());
+        }
         return this;
     }
 
     @Override
     public JsonArrayBuilder add(JsonArrayBuilder builder) {
         if (builder == null) throw new NullPointerException();
-        if (!(builder instanceof JacksonArrayBuilder))
-            throw new UnsupportedOperationException("No compatibility with other implementation yet.");
-        _delegate.add(((JacksonArrayBuilder) builder).delegate());
+        if (!(builder instanceof JacksonArrayBuilder)) {
+            _delegate.add(_nodeFactory.from(builder.build()));
+        } else {
+            _delegate.add(((JacksonArrayBuilder) builder).delegate());
+        }
         return this;
     }
 

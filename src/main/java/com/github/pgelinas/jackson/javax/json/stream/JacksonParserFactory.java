@@ -8,18 +8,21 @@ import javax.json.*;
 import javax.json.stream.*;
 
 import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.pgelinas.jackson.javax.json.*;
 
 public class JacksonParserFactory implements JsonParserFactory {
     private final JsonFactory _factory;
     private Map<String, Object> _configInUse;
+    private final NodeFactory _nodeFactory;
 
-    public JacksonParserFactory(JsonFactory factory) {
+    public JacksonParserFactory(JsonFactory factory, NodeFactory nodeFactory) {
         _factory = factory;
+        _nodeFactory = nodeFactory;
     }
 
-    public JacksonParserFactory(Map<String, ?> config) {
-        _factory = new JsonFactory();
+    public JacksonParserFactory(Map<String, ?> config, NodeFactory nodeFactory) {
+        this(new JsonFactory(), nodeFactory);
         _configInUse = ConfigurationUtils.configure(_factory, config);
     }
 
@@ -50,24 +53,25 @@ public class JacksonParserFactory implements JsonParserFactory {
         }
     }
 
-    // TODO: what to do in case we received something else then this implementation's node? 
-    // Probably re-use the JsonStructureParser from the RI?
     @Override
     public javax.json.stream.JsonParser createParser(JsonObject obj) {
-        if (obj instanceof JacksonValue) {
-            JacksonValue<?> node = (JacksonValue<?>) obj;
-            return new JacksonParser(node.delegate().traverse());
-        }
-        throw new UnsupportedOperationException("No compatibility with other implementation yet.");
+        return parseTree(obj);
     }
 
     @Override
     public javax.json.stream.JsonParser createParser(JsonArray array) {
-        if (array instanceof JacksonValue) {
-            JacksonValue<?> node = (JacksonValue<?>) array;
-            return new JacksonParser(node.delegate().traverse());
+        return parseTree(array);
+    }
+
+    private javax.json.stream.JsonParser parseTree(JsonValue value) {
+        JsonNode node;
+        if (value instanceof JacksonValue) {
+            node = ((JacksonValue<?>) value).delegate();
+        } else {
+            node = _nodeFactory.from(value);
         }
-        throw new UnsupportedOperationException("No compatibility with other implementation yet.");
+
+        return new JacksonParser(node.traverse());
     }
 
     @Override

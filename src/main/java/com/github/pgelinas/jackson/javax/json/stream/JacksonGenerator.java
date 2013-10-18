@@ -72,20 +72,50 @@ public class JacksonGenerator implements JsonGenerator {
     @Override
     public JsonGenerator write(String name, JsonValue value) {
         if (value == null) throw new NullPointerException();
-        try {
-            if (value == JsonValue.NULL) {
-                _generator.writeNullField(name);
-            } else if (value == JsonValue.FALSE) {
-                _generator.writeBooleanField(name, false);
-            } else if (value == JsonValue.TRUE) {
-                _generator.writeBooleanField(name, true);
-            } else if (value instanceof JacksonValue) {
-                _generator.writeObjectField(name, ((JacksonValue<?>) value).delegate());
-            } else throw new UnsupportedOperationException("No compatibility with other implementation yet.");
-        } catch (com.fasterxml.jackson.core.JsonGenerationException e) {
-            throw new JsonGenerationException("", e);
-        } catch (IOException e) {
-            throw new JsonException("", e);
+
+        // Fast track, implementation is Jackson-backed.
+        if (value instanceof JacksonValue) {
+            try {
+                _generator.writeFieldName(name);
+                _generator.writeTree(((JacksonValue<?>) value).delegate());
+            } catch (com.fasterxml.jackson.core.JsonGenerationException e) {
+                throw new JsonGenerationException("", e);
+            } catch (IOException e) {
+                throw new JsonException("", e);
+            }
+            return this;
+        }
+
+        // Slower track, implementation is not backed by Jackson and we need to generate json manually.
+        ValueType type = value.getValueType();
+        switch (type) {
+            case NUMBER:
+                write(name, ((JsonNumber) value).bigDecimalValue());
+                break;
+            case STRING:
+                write(name, ((JsonString) value).getString());
+                break;
+            case NULL:
+                writeNull(name);
+                break;
+            case FALSE:
+                write(name, false);
+                break;
+            case TRUE:
+                write(name, true);
+                break;
+            case ARRAY:
+                writeStartArray(name);
+                writeArray((JsonArray) value);
+                writeEnd();
+                break;
+            case OBJECT:
+                writeStartObject(name);
+                writeObject((JsonObject) value);
+                writeEnd();
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
 
         return this;
@@ -209,10 +239,31 @@ public class JacksonGenerator implements JsonGenerator {
 
     @Override
     public JsonGenerator write(JsonValue value) {
+        if (value == null) throw new NullPointerException();
+
+        // Fast track, implementation is Jackson-backed.
+        if (value instanceof JacksonValue) {
+            try {
+                _generator.writeTree(((JacksonValue<?>) value).delegate());
+            } catch (com.fasterxml.jackson.core.JsonGenerationException e) {
+                throw new JsonGenerationException("", e);
+            } catch (IOException e) {
+                throw new JsonException("", e);
+            }
+            return this;
+        }
+
+        // Slower track, implementation is not backed by Jackson and we need to generate json manually.
         ValueType type = value.getValueType();
         switch (type) {
-            case ARRAY:
-                writeArray((JsonArray) value);
+            case NUMBER:
+                write(((JsonNumber) value).bigDecimalValue());
+                break;
+            case STRING:
+                write(((JsonString) value).getString());
+                break;
+            case NULL:
+                writeNull();
                 break;
             case FALSE:
                 write(false);
@@ -220,38 +271,34 @@ public class JacksonGenerator implements JsonGenerator {
             case TRUE:
                 write(true);
                 break;
-            case NULL:
-                writeNull();
-                break;
-            case NUMBER:
-                write(((JsonNumber) value).bigDecimalValue());
+            case ARRAY:
+                writeStartArray();
+                writeArray((JsonArray) value);
+                writeEnd();
                 break;
             case OBJECT:
+                writeStartObject();
                 writeObject((JsonObject) value);
-                break;
-            case STRING:
-                write(((JsonString) value).getString());
+                writeEnd();
                 break;
             default:
                 throw new UnsupportedOperationException();
         }
+
         return this;
+
     }
 
     private void writeObject(JsonObject value) {
-        writeStartObject();
         for (Entry<String, JsonValue> entry : value.entrySet()) {
             write(entry.getKey(), entry.getValue());
         }
-        writeEnd();
     }
 
     private void writeArray(JsonArray value) {
-        writeStartArray();
         for (JsonValue jsonValue : value) {
             write(jsonValue);
         }
-        writeEnd();
     }
 
     @Override
@@ -368,5 +415,9 @@ public class JacksonGenerator implements JsonGenerator {
         } catch (IOException e) {
             throw new JsonException("", e);
         }
+    }
+
+    public com.fasterxml.jackson.core.JsonGenerator delegate() {
+        return _generator;
     }
 }
