@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 
 dependencies {
-    compile 'javax.json:javax.json-api:1.0-b06'
+    compile 'javax.json:javax.json-api:1.0'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.2.1'
     testCompile 'junit:junit:4.10'
 }
