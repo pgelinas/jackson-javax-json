@@ -1,5 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'ivy-publish' // ivy publishing is for fallback if maven doesn't work.
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 dependencies {
     compile 'javax.json:javax.json-api:1.0'
@@ -8,12 +11,79 @@ dependencies {
 }
 
 group = "com.github.pgelinas"
-version = "0.5.0"
-
-jar {
-    baseName = "jackson.javax.json"
-}
+version = "0.9.0"
 
 repositories { mavenCentral() }
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.java
+    classifier 'sources'
+}
+
+// Required for Maven central
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+// Maven central release use the "old" uploadArchives mechanism since maven-publish doesn't support signing yet.
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+    archives jar
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") } // Only sign during release.
+    sign configurations.archives
+}
+
+// Maven central configuration.
+uploadArchives {
+    repositories {
+        mavenDeployer(name: 'mavenCentral') {
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                // Add credentials only if they are present in the project.
+                // Avoid build failure if not trying to release and user doesn't have proper credentials.
+                if(project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')){
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+            }
+
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            // All these are required for maven central release.
+            // See https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-6.CentralSyncRequirement
+            pom.project {
+                name 'jackson-javax-json'
+                packaging 'jar'
+                description 'An alternate implementation of JSR-353 based on Jackson, which aims to bring better performance and configurability.'
+                url 'https://github.com/pgelinas/jackson-javax-json'
+
+                scm {
+                    url 'scm:git@github.com:pgelinas/jackson-javax-json.git'
+                    connection 'scm:git@github.com:pgelinas/jackson-javax-json.git'
+                    developerConnection 'scm:git@github.com:pgelinas/jackson-javax-json.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.html'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'pgelinas'
+                        name 'Pascal Gélinas'
+                        email 'pascal.gelinas6@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
 
 task wrapper(type: Wrapper) { gradleVersion = '2.2.1' }
