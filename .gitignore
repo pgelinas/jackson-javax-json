@@ -4,3 +4,7 @@
 .settings/
 .project
 .classpath
+.idea/
+out/
+/src/test/java/org/glassfish/json/tests/
+/src/test/resources/*.json
