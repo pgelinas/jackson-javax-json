@@ -61,7 +61,11 @@ public class JacksonObject extends AbstractMap<String, JsonValue> implements Jso
     @Override
     public String getString(String name, String defaultValue) {
         JsonNode jsonNode = _delegate.get(name);
-        return (jsonNode == null) ? defaultValue : jsonNode.asText();
+        if(jsonNode == null) {
+            return defaultValue;
+        } else {
+            return jsonNode.isNull() ? defaultValue : jsonNode.asText();
+        }
     }
 
     @Override
@@ -72,7 +76,11 @@ public class JacksonObject extends AbstractMap<String, JsonValue> implements Jso
     @Override
     public int getInt(String name, int defaultValue) {
         JsonNode jsonNode = _delegate.get(name);
-        return (jsonNode == null) ? defaultValue : jsonNode.asInt(defaultValue);
+        if(jsonNode == null) {
+            return defaultValue;
+        } else {
+            return jsonNode.isNull() ? defaultValue : jsonNode.asInt(defaultValue);
+        }
     }
 
     @Override
@@ -83,7 +91,11 @@ public class JacksonObject extends AbstractMap<String, JsonValue> implements Jso
     @Override
     public boolean getBoolean(String name, boolean defaultValue) {
         JsonNode jsonNode = _delegate.get(name);
-        return (jsonNode == null) ? defaultValue : jsonNode.asBoolean(defaultValue);
+        if(jsonNode == null) {
+            return defaultValue;
+        } else {
+            return jsonNode.isNull() ? defaultValue : jsonNode.asBoolean(defaultValue);
+        }
     }
 
     @Override
