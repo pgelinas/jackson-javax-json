@@ -1,3 +1,5 @@
+# I am no longer supporting this project, you are free to fork and modify as you wish.
+
 # Overview
 
 This is an alternate implementation of [JSR353](http://jcp.org/en/jsr/detail?id=353), the reference implementation being from the [Glassfish project](https://jsonp.java.net/). It aims at providing Jackson as a drop-in replacement for the RI, which brings better performance and configurability.
