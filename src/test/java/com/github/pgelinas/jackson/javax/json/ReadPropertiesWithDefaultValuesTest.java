@@ -15,6 +15,8 @@ public class ReadPropertiesWithDefaultValuesTest {
 
     private static final JsonObject EMPTY_JSON_OBJECT = PROVIDER.createReader(new StringReader("{}")).readObject();
 
+    private static final JsonObject JSON_OBJECT_WITH_NULL_VALUE = PROVIDER.createReader(new StringReader("{ \"foo\": null }")).readObject();
+
     @Test
     public void getStringPropertyWithDefaultValue() {
         assertThat(EMPTY_JSON_OBJECT.getString("prop", "default"), equalTo("default"));
@@ -30,4 +32,18 @@ public class ReadPropertiesWithDefaultValuesTest {
         assertThat(EMPTY_JSON_OBJECT.getInt("prop", 100), equalTo(100));
     }
 
+    @Test
+    public void getNullValueStringPropertyWithDefaultValue() {
+        assertThat(JSON_OBJECT_WITH_NULL_VALUE.getString("foo", "bar"), equalTo("bar"));
+    }
+
+    @Test
+    public void getNullValueBooleanPropertyWithDefaultValue() {
+        assertThat(JSON_OBJECT_WITH_NULL_VALUE.getBoolean("foo", true), equalTo(true));
+    }
+
+    @Test
+    public void getNullValueIntPropertyWithDefaultValue() {
+        assertThat(JSON_OBJECT_WITH_NULL_VALUE.getInt("foo", 1), equalTo(1));
+    }
 }
